@@ -2,10 +2,8 @@
   "name": "srp2-stress-testing",
   "version": "1.0.0",
   "description": "SRP2 portal & region, sq2 service stress testing",
-  "main": "stressTestingScript.js",
+  "main": "",
   "scripts": {
-    "start": "node --harmony $npm_package_main",
-    "test": "test"
   },
   "keywords": [
     "node"
@@ -13,6 +11,7 @@
   "author": "RAHUL PANDEY",
   "license": "ISC",
   "dependencies": {
+    "csv-parser": "^2.3.2",
     "fs": "0.0.1-security",
     "request": "^2.88.0"
   }

@@ -6,55 +6,55 @@ let srp2RegionDomainURL = 'https://tetlefxquj-usa.ipsos-srp-dev.com';
 
 module.exports = {
 
-  appSettings: sessionId => {
+  appSettings: srp2RegionURL => {
     return new Promise((resolve, reject) => {
       var options = {
         'method': 'GET',
-        'url': `${srp2RegionDomainURL}/project/settings/app`,
+        'url': `${srp2RegionURL}/project/settings/app`,
         'headers': {
           'Content-Type': 'application/json',
-          'X-SRP2-PROJECT-SESSION': sessionId,
         },
       };
+      console.log('Request API call: ', options.url);
       return request(options, function (error, response) { 
         if (error) return reject(error);
-        console.log(response.body);
+        // console.log(response.body);
         return resolve(response.body);
       });
     })
   },
 
-  regSettings: () => {
+  regSettings: srp2RegionURL => {
     return new Promise((resolve, reject) => {
       var options = {
         'method': 'GET',
-        'url': `${srp2RegionDomainURL}/project/settings/registration`,
+        'url': `${srp2RegionURL}/project/settings/registration`,
         'headers': {
           'Content-Type': 'application/json',
-          'X-SRP2-PROJECT-SESSION': sessionId,
         },
       };
+      console.log('Request API call: ', options.url);
       return request(options, function (error, response) { 
         if (error) return reject(error);
-        console.log(response.body);
+        // console.log(response.body);
         return resolve(response.body);
       });
     })
   },
 
-  emailSettings: sessionId => {
+  emailSettings: srp2RegionURL => {
     return new Promise((resolve, reject) => {
       var options = {
         'method': 'GET',
-        'url': `${srp2RegionDomainURL}/project/settings/email`,
+        'url': `${srp2RegionURL}/project/settings/email`,
         'headers': {
           'Content-Type': 'application/json',
-          'X-SRP2-PROJECT-SESSION': sessionId,
         },
       };
+      console.log('Request API call: ', options.url);
       return request(options, function (error, response) { 
         if (error) return reject(error);
-        console.log(response.body);
+        // console.log(response.body);
         return resolve(response.body);
       });
     })
@@ -78,37 +78,37 @@ module.exports = {
     })
   },
 
-  textJsonData: sessionId => {
+  textJsonData: () => {
     return new Promise((resolve, reject) => {
       var options = {
         'method': 'GET',
         'url': `https://s3-us-west-2.amazonaws.com/srp-app-int.ipsos-srp-dev.com/assets/i18n/en.json?v=20.1.0a:int`,
         'headers': {
           'Content-Type': 'application/json',
-          'X-SRP2-PROJECT-SESSION': sessionId,
         },
       };
+      console.log('Request API call: ', options.url);
       return request(options, function (error, response) { 
         if (error) return reject(error);
-        console.log(response.body);
+        // console.log(response.body);
         return resolve(response.body);
       });
     })
   },
 
-  siteMessages: sessionId => {
+  siteMessages: srp2RegionURL => {
     return new Promise((resolve, reject) => {
       var options = {
         'method': 'GET',
-        'url': `${srp2RegionDomainURL}/project/settings/siteMessages`,
+        'url': `${srp2RegionURL}/project/settings/siteMessages`,
         'headers': {
           'Content-Type': 'application/json',
-          'X-SRP2-PROJECT-SESSION': sessionId,
         },
       };
+      console.log('Request API call: ', options.url);
       return request(options, function (error, response) { 
         if (error) return reject(error);
-        console.log(response.body);
+        // console.log(response.body);
         return resolve(response.body);
       });
     })
@@ -268,4 +268,130 @@ module.exports = {
       });
     })
   },
+
+  validateToken: (srp2RegionURL, token) => {
+    return new Promise((resolve, reject) => {
+      var options = {
+        'method': 'POST',
+        'url': `${srp2RegionURL}/validation?token=${token}`,
+        'headers': {
+          'Content-Type': 'application/json',
+        },
+        'body': JSON.stringify({"inviteCode":token}),
+      };
+      console.log('Request API call: ', options.url);
+      return request(options, function (error, response) { 
+        if (error) return reject(error);
+        // console.log(response.body);
+        return resolve(response.body);
+      });
+    })
+  },
+
+  registrationHits: (srp2RegionURL, token) => {
+    return new Promise((resolve, reject) => {
+      var options = {
+        'method': 'GET',
+        'url': `${srp2RegionURL}/users/registrationHits`,
+        'headers': {
+          'Content-Type': 'application/json',
+        },
+      };
+      console.log('Request API call: ', options.url);
+      return request(options, function (error, response) { 
+        if (error) return reject(error);
+        // console.log(response.body);
+        return resolve(response.body);
+      });
+    })
+  },
+
+  media: (srp2RegionURL, reqBody) => {
+    // HC for now body incase no data sent from API caller
+    reqBody = (!reqBody || Object.keys(reqBody).length === 0) ? 
+      {"fileName":"3d.jpg","mediaType":"Image","publicMedia":true,"metaData":{}} :
+      reqBody;
+    return new Promise((resolve, reject) => {
+      var options = {
+        'method': 'POST',
+        'url': `${srp2RegionURL}/users/avatar/media`,
+        'headers': {
+          'Content-Type': 'application/json',
+        },
+        'body': JSON.stringify(reqBody),
+      };
+      console.log('Request API call: ', options.url);
+      return request(options, function (error, response) { 
+        if (error) return reject(error);
+        // console.log(response.body);
+        return resolve(response.body);
+      });
+    })
+  },
+
+  defaultIcons: (iconName= '3d.jpg') => {
+    return new Promise((resolve, reject) => {
+      var options = {
+        'method': 'POST',
+        'url': `https://s3-us-west-2.amazonaws.com/srp-app-int.ipsos-srp-dev.com/assets/defaultIcons/${iconName}`,
+        'headers': {
+          'Content-Type': 'application/json',
+        },
+        'body': JSON.stringify(reqBody),
+      };
+      console.log('Request API call: ', options.url);
+      return request(options, function (error, response) { 
+        if (error) return reject(error);
+        // console.log(response.body);
+        return resolve(response.body);
+      });
+    })
+  },
+
+  /**
+   * API call post clicking Register - This is first call to response for Registration Success
+   */
+  registration: (srp2RegionURL, userId, reqBody, sessionId) => {
+    return new Promise((resolve, reject) => {
+      var options = {
+        'method': 'POST',
+        'url': `${srp2RegionURL}/registration/${userId}`,
+        'headers': {
+          'Content-Type': 'application/json',
+          'X-SRP2-PROJECT-SESSION': sessionId,
+        },
+        'body': JSON.stringify(reqBody),
+      };
+      console.log('Request API call: ', options.url);
+      return request(options, function (error, response) { 
+        if (error) return reject(error);
+        // console.log(response.body);
+        return resolve(response.body);
+      });
+    })
+  },
+
+  /**
+   * This calls happen post registration call is done.
+   * username and password is taken from user and stored to be used here
+   */
+  authenticationProject: (srp2RegionUrl, reqBody) => {
+    reqBody = {"username":"user110","password":"Ipsos@2019"}
+    return new Promise((resolve, reject) => {
+      var options = {
+        'method': 'POST',
+        'url': `${srp2RegionUrl}/registration/${userId}`,
+        'headers': {
+          'Content-Type': 'application/json',
+        },
+        'body': JSON.stringify(reqBody),
+      };
+      console.log('Request API call: ', options.url);
+      return request(options, function (error, response) { 
+        if (error) return reject(error);
+        // console.log(response.body);
+        return resolve(response.body);
+      });
+    })
+  }
 }
