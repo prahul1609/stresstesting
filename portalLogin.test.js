@@ -1,7 +1,7 @@
-const portalService = require('./portalService');
+const portalService = require('./services/portalService');
 const portalUsers = require('./portalUsers.json');
 
-const noOfSessions = 100;
+const noOfSessions = 300;
 
 let failedCasesCount = 0;
 let successCount = 0;

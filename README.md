@@ -18,7 +18,7 @@ Go ahead with particular tests with provided commands
 
 #Portal Stress Testing Landing page (login)
 Run below command
-`node portalLanding.test.js`
+`node portalLogin.test.js`
 
 
 #For Region Members Registration -
