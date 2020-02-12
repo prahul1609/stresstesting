@@ -21,7 +21,7 @@ async function register(url, token) {
       confirmPassoword: DEFAULT_PASSWORD,
     }
     if (!userId) return;
-    const regData = await registration(url, userId, reqBodyForReg, sessionId);
+    const regData = await regionService.registration(url, userId, reqBodyForReg, sessionId);
     return regData;
   } catch(err) {
     console.log(err);
