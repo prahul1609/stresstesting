@@ -1,32 +1,10 @@
 const csv = require('csv-parser');
 const fs = require('fs');
-const request = require('request');
 
 const regionService = require('./services/regionService');
 
 const DEFAULT_PASSWORD = 'Ipsos@2019';
 const REGISTRATION_CSV_FILE = './input_csv/registration.csv';
-
-async function register(url, token) {
-  try {
-    const validateRes = await regionService.validateToken(url, token);
-    const parsedValidateRes = validateRes && JSON.parse(validateRes);
-    const { userId, userName, firstName, lastName, sessionId} = parsedValidateRes;
-    const reqBodyForReg = {
-      userName,
-      firstName,
-      lastName,
-      avatarId: '4e1bb9bc-417d-4fbd-b4ad-36b9522dd0a5', //HC for 4b.jpg
-      password: DEFAULT_PASSWORD,
-      confirmPassoword: DEFAULT_PASSWORD,
-    }
-    if (!userId) return;
-    const regData = await regionService.registration(url, userId, reqBodyForReg, sessionId);
-    return regData;
-  } catch(err) {
-    console.log(err);
-  }
-}
 
 const startForRegister = () => {
   const promises = [];
@@ -42,14 +20,72 @@ const startForRegister = () => {
   .on('end', async _ => {
     console.log('CSV file successfully processed');
     try {
-      await Promise.all(promises);
-      console.log('Registration completed successfully for all users')
+      const responses = await Promise.all(promises);
+      const allUsersCount = responses.length;
+      const regFailedData = responses.filter(resp => resp === null);
+      const regFailedUsersCount = regFailedData.length;
+      console.log('Below is the details:');
+      console.log('*****************************************************');
+      if (!regFailedUsersCount) {
+        const failedNewRegUsers = data.filter(resp => resp !== '{"message":"Registration Success"}');
+        if (failedNewRegUsers.length > 0) {
+          console.log('Users registration success partially.');
+          console.log('Success registered users count: ', allUsersCount-failedNewRegUsers.length)
+          console.log('Failed registered users count: ', failedNewRegUsers.length)
+        } else {
+          console.log('All users registration completed successfully. Total success reg user count: ');
+          console.log('Total success registered user count: ', allUsersCount);
+        }
+      } else if (regFailedUsersCount === allUsersCount) console.log('Registration already done for all users');
+        else if (regFailedUsersCount > 0) {
+        console.log('Users already registerted: ', regFailedUsersCount)
+        console.log('New users registered successfully',allUsersCount-regFailedUsersCount)
+      }
+      console.log('*****************************************************');
       return null;
     } catch(err) {
       console.log(err)
       console.log('Unable to register. Failed!!!')
     }
   });
+}
+
+async function register(url, token) {
+  try {
+    const mediaReqBody = {
+      fileName: "3b.jpg",
+      mediaType: "Image",
+      publicMedia: true,
+      metaData: {},
+    }
+    const promises = [
+      regionService.appSettings(url),
+      regionService.regSettings(url),
+      regionService.emailSettings(url),
+      regionService.registrationHits(url),
+      regionService.textJsonData(),
+      regionService.siteMessages(url),
+      regionService.validateToken(url, token),
+      regionService.media(url, mediaReqBody),
+    ];
+    const allData = await Promise.all(promises);
+    const { userId, userName, firstName, lastName, sessionId} = allData[6] && JSON.parse(allData[6]); //validateToken
+    const {mediaRecord: {mediaId} } = allData[7] && JSON.parse(allData[7]); // media
+    
+    if (!userId) return null; // Error when already registered
+    const reqBodyForReg = {
+      userName,
+      firstName,
+      lastName,
+      avatarId: mediaId, //HC for 4b.jpg
+      password: DEFAULT_PASSWORD,
+      confirmPassoword: DEFAULT_PASSWORD,
+    }
+    const regData = await regionService.registration(url, userId, reqBodyForReg, sessionId);
+    return regData;
+  } catch(err) {
+    console.log(err);
+  }
 }
 
 startForRegister();
