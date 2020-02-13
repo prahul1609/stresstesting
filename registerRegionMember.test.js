@@ -6,6 +6,9 @@ const regionService = require('./services/regionService');
 const DEFAULT_PASSWORD = 'Ipsos@2019';
 const REGISTRATION_CSV_FILE = './input_csv/registration.csv';
 
+let countOfRegUsers = 0;
+let isGiveStatsCall = false;
+
 const startForRegister = () => {
   const promises = [];
   fs.createReadStream(REGISTRATION_CSV_FILE)
@@ -36,7 +39,7 @@ const startForRegister = () => {
           console.log('All users registration completed successfully. Total success reg user count: ');
           console.log('Total success registered user count: ', allUsersCount);
         }
-      } else if (regFailedUsersCount === allUsersCount) console.log('Registration already done for all users');
+      } else if (regFailedUsersCount === allUsersCount) console.log('Registration already done for all users count: ', allUsersCount);
         else if (regFailedUsersCount > 0) {
         console.log('Users already registerted: ', regFailedUsersCount)
         console.log('New users registered successfully',allUsersCount-regFailedUsersCount)
@@ -81,11 +84,20 @@ async function register(url, token) {
       password: DEFAULT_PASSWORD,
       confirmPassoword: DEFAULT_PASSWORD,
     }
+    countOfRegUsers++;
     const regData = await regionService.registration(url, userId, reqBodyForReg, sessionId);
+    !isGiveStatsCall ? giveStats() : null;
     return regData;
   } catch(err) {
     console.log(err);
   }
+}
+
+function giveStats() {
+  isGiveStatsCall = true;
+  setTimeout(() => {
+    console.log(`Successful Registered User count: ${countOfRegUsers}`);
+  }, 3000);
 }
 
 startForRegister();

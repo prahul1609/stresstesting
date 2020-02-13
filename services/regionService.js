@@ -354,6 +354,7 @@ module.exports = {
   registration: (srp2RegionURL, userId, reqBody, sessionId) => {
     return new Promise((resolve, reject) => {
       var options = {
+        'timeout': 4000,
         'method': 'POST',
         'url': `${srp2RegionURL}/registration/${userId}`,
         'headers': {
