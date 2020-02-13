@@ -27,7 +27,7 @@ const startForRegister = () => {
       console.log('Below is the details:');
       console.log('*****************************************************');
       if (!regFailedUsersCount) {
-        const failedNewRegUsers = data.filter(resp => resp !== '{"message":"Registration Success"}');
+        const failedNewRegUsers = responses.filter(resp => resp !== '{"message":"Registration Success"}');
         if (failedNewRegUsers.length > 0) {
           console.log('Users registration success partially.');
           console.log('Success registered users count: ', allUsersCount-failedNewRegUsers.length)
